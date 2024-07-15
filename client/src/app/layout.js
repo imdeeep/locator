@@ -1,7 +1,7 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "locator",
+  title: "Locator",
   description: "A real-time location-based app built with Socket.IO.",
 };
 

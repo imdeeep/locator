@@ -2,3 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap');
+
+*{
+    font-family: "Manrope", sans-serif;
+}
+body{
+    background-color: #0F0F10;
+}
