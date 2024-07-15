@@ -1,57 +1,67 @@
-import React from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
+import Cookies from 'js-cookie';  
 
 const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post('http://localhost:5000/auth/login', { email, password }, { withCredentials: true });
+      const { token } = res.data;
+      Cookies.set('token', token, { expires: 1, path: '/', domain: 'localhost' });
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Login error:', error);
+    }
+  };
+
   return (
-    <div
-      className="rounded-lg bg-card text-card-foreground shadow-lg bg-[#18181B] text-[#E7E7E4]"
-      data-v0-t="card"
-    >
+    <div className="rounded-lg bg-card text-card-foreground shadow-lg bg-[#18181B] text-[#E7E7E4]">
       <div className="flex flex-col space-y-1.5 p-6">
-        <h3 className="whitespace-nowrap font-semibold tracking-tight text-2xl">
-          Welcome back!
-        </h3>
+        <h3 className="whitespace-nowrap font-semibold tracking-tight text-2xl">Welcome back!</h3>
         <p className="text-sm text-muted-foreground text-[#DBDBD7]">
           Enter your email and password to access your account.
         </p>
       </div>
-      <div className="p-6 space-y-4">
+      <form onSubmit={handleLogin} className="p-6 space-y-4">
         <div className="space-y-2">
-          <label
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-[#DBDBD7]"
-            htmlFor="email"
-          >
+          <label htmlFor="email" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-[#DBDBD7]">
             Email
           </label>
           <input
-            className="flex h-10 w-full rounded-md border border-zinc-800 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 bg-[#0F0F10]"
             type="email"
             id="email"
             placeholder="m@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="flex h-10 w-full rounded-md border border-zinc-800 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 bg-[#0F0F10]"
           />
         </div>
         <div className="space-y-2">
-          <label
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-[#DBDBD7]"
-            htmlFor="password"
-          >
+          <label htmlFor="password" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-[#DBDBD7]">
             Password
           </label>
           <input
-            className="flex h-10 w-full rounded-md border border-zinc-800 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 bg-[#0F0F10]"
             type="password"
             id="password"
             placeholder="Enter the password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="flex h-10 w-full rounded-md border border-zinc-800 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 bg-[#0F0F10]"
           />
         </div>
-      </div>
-      <div className="flex items-center p-6">
-        <button
-          className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full bg-[#E6E6E6] text-black"
-          type="submit"
-        >
-          Login
-        </button>
-      </div>
+        <div className="flex items-center p-6">
+          <button
+            type="submit"
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full bg-[#E6E6E6] text-black"
+          >
+            Login
+          </button>
+        </div>
+      </form>
     </div>
   );
 };

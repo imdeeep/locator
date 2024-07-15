@@ -1,8 +1,17 @@
+"use client"
 import React from "react";
 import { IoIosLogOut } from "react-icons/io";
 import { FiMap } from "react-icons/fi";
+import jsCookie from "js-cookie";
 
 const Navbar = () => {
+  const handleLogout = () => {
+    const confirmation = window.confirm("Are you sure you want to logout?");
+    if (confirmation) {
+      jsCookie.remove('token');
+      window.location.href = '/';
+    }
+  }
   return (
     <div className="bg-background text-background-foreground flex flex-col bg-[#212124] text-white">
       <header className="bg-muted/40 px-2 md:px-4 py-1 md:py-2 flex items-center justify-between">
@@ -33,7 +42,7 @@ const Navbar = () => {
               type="search"
             />
           </div>
-          <button>
+          <button onClick={handleLogout}>
             <IoIosLogOut size={22} />
           </button>
         </div>

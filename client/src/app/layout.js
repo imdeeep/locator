@@ -1,4 +1,6 @@
+import AuthWrapper from "@/components/AuthWrapper";
 import "./globals.css";
+import { AuthProvider } from "@/context/AuthContext";
 
 export const metadata = {
   title: "Locator",
@@ -7,8 +9,16 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
+    <>
+    <AuthProvider>
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <AuthWrapper>
+        {children}
+        </AuthWrapper>
+        </body>
     </html>
+    </AuthProvider>
+    </>
   );
 }

@@ -16,8 +16,17 @@ L.Icon.Default.mergeOptions({
 const UserMap = () => {
   const [users, setUsers] = useState([]);
   const [socket, setSocket] = useState(null);
+  const [currentPosition, setCurrentPosition] = useState([51.505, -0.09]); 
 
   useEffect(() => {
+    // Get the current location
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const { latitude, longitude } = position.coords;
+        setCurrentPosition([latitude, longitude]);
+      });
+    }
+
     // Initialize socket connection
     const newSocket = io('http://localhost:5000'); // Change this to your backend URL
     setSocket(newSocket);
@@ -30,12 +39,29 @@ const UserMap = () => {
       });
     });
 
-    // Clean up on component unmount
+    // Cleanup on component unmount
     return () => newSocket.close();
   }, []);
 
+  useEffect(() => {
+    if (socket) {
+      // Update location every 3 seconds
+      const updateLocation = () => {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition((position) => {
+            const { latitude, longitude } = position.coords;
+            socket.emit('updateLocation', { lat: latitude, lng: longitude });
+          });
+        }
+      };
+
+      const interval = setInterval(updateLocation, 3000);
+      return () => clearInterval(interval);
+    }
+  }, [socket]);
+
   return (
-    <MapContainer center={[51.505, -0.09]} zoom={10} className="w-[100vw] h-[100vh]">
+    <MapContainer center={currentPosition} zoom={10} className="w-[100vw] h-[100vh]">
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -45,6 +71,9 @@ const UserMap = () => {
           <Popup>{user.name}</Popup>
         </Marker>
       ))}
+      <Marker position={currentPosition}>
+        <Popup>Your current location</Popup>
+      </Marker>
     </MapContainer>
   );
 };

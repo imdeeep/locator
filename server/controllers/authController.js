@@ -32,7 +32,11 @@ exports.signup = async (req, res) => {
         };
         jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 3600 }, (err, token) => {
             if (err) throw err;
-            res.cookie('token', token, { httpOnly: true, secure: process.env.SECURITY, sameSite: 'Lax' });
+            res.cookie('token', token, {
+                httpOnly: false,
+                secure: process.env.SECURITY === 'true', // Set to true in production
+                sameSite: 'None', // Ensure this is set for cross-site cookies
+              });
             res.json({ token });
         });
     } catch (err) {
@@ -65,7 +69,11 @@ exports.login = async (req, res) => {
 
         jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 3600 }, (err, token) => {
             if (err) throw err;
-            res.cookie('token', token, { httpOnly: true, secure: false, sameSite: 'Lax' });
+            res.cookie('token', token, {
+                httpOnly: false,
+                secure: process.env.SECURITY === 'true', // Set to true in production
+                sameSite: 'None', // Ensure this is set for cross-site cookies
+              });
             res.json({ msg: 'Login successful', token });
         });
     } catch (err) {
