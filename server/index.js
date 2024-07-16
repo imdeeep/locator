@@ -10,7 +10,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: ["http://localhost:3000","*"], // frontend URL
+    origin: "https://weblocator.vercel.app/", // frontend URL
     methods: ["GET", "POST"],
     credentials: true, 
   },
@@ -28,7 +28,7 @@ connectDB();
 
 // Middlewares
 app.use(cors({
-  origin: ["http://localhost:3000","*"], // Frontend URL
+  origin: "https://weblocator.vercel.app/", // Frontend URL
   credentials: true, 
 }));
 app.use(express.json());
