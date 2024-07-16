@@ -16,7 +16,8 @@ L.Icon.Default.mergeOptions({
 const UserMap = () => {
   const [users, setUsers] = useState([]);
   const [socket, setSocket] = useState(null);
-  const [currentPosition, setCurrentPosition] = useState([51.505, -0.09]); 
+  const [currentPosition, setCurrentPosition] = useState([51.505, -0.09]);
+  const [connectedUsers, setConnectedUsers] = useState([]);
 
   useEffect(() => {
     // Get the current location
@@ -28,7 +29,7 @@ const UserMap = () => {
     }
 
     // Initialize socket connection
-    const newSocket = io('http://localhost:5000'); // Change this to your backend URL
+    const newSocket = io('https://locator-ikrw.onrender.com/'); // Change this to your backend URL
     setSocket(newSocket);
 
     // Listen for user location updates
@@ -39,9 +40,25 @@ const UserMap = () => {
       });
     });
 
+    // Listen for connection requests
+    newSocket.on('connectionRequest', ({ fromUser, fromSocketId }) => {
+      // Prompt user to accept the connection request
+      if (window.confirm(`Accept connection request from ${fromUser.name}?`)) {
+        newSocket.emit('acceptConnectionRequest', fromSocketId);
+      }
+    });
+
+    // Listen for connection acceptance
+    newSocket.on('connectionAccepted', ({ user, socketId }) => {
+      setConnectedUsers((prevConnectedUsers) => [...prevConnectedUsers, socketId]);
+    });
+
+    // Register the current user
+    newSocket.emit('registerUser', { name: 'Your Name', lat: currentPosition[0], lng: currentPosition[1] });
+
     // Cleanup on component unmount
     return () => newSocket.close();
-  }, []);
+  }, [currentPosition]);
 
   useEffect(() => {
     if (socket) {
@@ -60,6 +77,12 @@ const UserMap = () => {
     }
   }, [socket]);
 
+  const sendConnectionRequest = (userId) => {
+    if (socket) {
+      socket.emit('sendConnectionRequest', userId);
+    }
+  };
+
   return (
     <MapContainer center={currentPosition} zoom={10} className="w-[100vw] h-[100vh]">
       <TileLayer
@@ -68,7 +91,10 @@ const UserMap = () => {
       />
       {users.map(user => (
         <Marker key={user.id} position={[user.lat, user.lng]}>
-          <Popup>{user.name}</Popup>
+          <Popup>
+            {user.name}
+            <button onClick={() => sendConnectionRequest(user.id)}>Connect</button>
+          </Popup>
         </Marker>
       ))}
       <Marker position={currentPosition}>

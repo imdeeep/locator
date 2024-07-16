@@ -11,7 +11,7 @@ const Signup = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:5000/auth/signup', { name, email, password }, { withCredentials: true });
+      const res = await axios.post('https://locator-ikrw.onrender.com/auth/signup', { name, email, password }, { withCredentials: true });
       alert('Signup successful');
       const { token } = res.data;
       Cookies.set('token', token, { expires: 1, path: '/', domain: 'localhost' }); 

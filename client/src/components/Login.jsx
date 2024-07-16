@@ -9,7 +9,7 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:5000/auth/login', { email, password }, { withCredentials: true });
+      const res = await axios.post('https://locator-ikrw.onrender.com/auth/login', { email, password }, { withCredentials: true });
       const { token } = res.data;
       Cookies.set('token', token, { expires: 1, path: '/', domain: 'localhost' });
       window.location.href = '/';
